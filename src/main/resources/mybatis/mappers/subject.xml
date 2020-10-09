@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="subject">
+
+<!-- 과목, 과목카테고리 관리 -->
+
+
+<!-- 과목카테고리 리스트 가져오기 -->
+<select id="selectSubjectCateList" resultType="com.bitacademy.vo.SubjectCateVo">
+	<![CDATA[
+		select  subjectCate_id,
+				cateName,
+				parent_id
+		from subjectCate
+		order by cateName asc, subjectCate_id desc
+	]]>
+</select>
+
+<!-- 카테고리 등록하기 -->
+<insert id="insertSubjectCate" parameterType="com.bitacademy.vo.SubjectCateVo" >
+    <selectKey keyProperty="subjectCate_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+	    insert into subjectCate(
+	    	cateName,
+	        parent_id)
+	     values (
+	     	#{cateName},
+	    	#{parent_id}
+	     )
+    ]]>
+</insert>
+
+<!-- 카테고리 제목만 수정하기 -->
+<update id="updateSubjectCateName" parameterType="com.bitacademy.vo.SubjectCateVo">
+    <![CDATA[
+	    UPDATE subjectCate set
+	    	cateName=#{cateName}
+	    where subjectCate_id=#{subjectCate_id}
+    ]]>
+</update>
+
+<!-- 카테고리 삭제하기 -->
+<delete id="deleteSubjectCate" parameterType="com.bitacademy.vo.SubjectCateVo">
+    <![CDATA[
+	    delete from subjectCate
+	    where subjectCate_id=#{subjectCate_id} 
+    ]]>
+</delete>
+
+<!-- 카테고리 이동하기 -->
+<update id="updateSubjectCateParent_id" parameterType="com.bitacademy.vo.SubjectCateVo">
+    <![CDATA[
+	    UPDATE subjectCate set
+	    	parent_id=#{parent_id}
+	    where subjectCate_id=#{subjectCate_id}
+    ]]>
+</update>
+
+
+
+
+<!-- 과목 리스트 가져오기 -->
+<select id="selectSubjectList" resultType="com.bitacademy.vo.SubjectVo">
+	<![CDATA[
+        select  subject_id,
+        		subjectCate_id,
+        		subjectName,
+        		subjectDesc
+        from subject
+       	order by subjectName asc, subject_id desc
+	]]>
+</select>
+
+
+
+
+
+<!-- 과목 등록하기 -->
+<insert id="insertSubject" parameterType="com.bitacademy.vo.SubjectVo" >
+    <selectKey keyProperty="subject_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+    	insert into subject(
+			subjectCate_id,
+			subjectName,
+      		subjectDesc
+  		) 
+    	values(
+    		#{subjectCate_id},
+    		#{subjectName},
+    		#{subjectDesc}
+    	)
+    ]]>
+</insert>
+
+<!-- 과목 제목만 수정하기 -->
+<update id="updateSubjectName" parameterType="com.bitacademy.vo.SubjectVo">
+	<![CDATA[
+		UPDATE subject set
+			subjectName = #{subjectName}
+	 	where subject_id = #{subject_id}
+	]]>
+</update>
+
+<!-- 과목 삭제하기 -->
+<delete id="deleteSubject" parameterType="com.bitacademy.vo.SubjectVo">
+    <![CDATA[
+	    delete from subject
+	    where subject_id = #{subject_id}
+    ]]>
+</delete>
+
+<!-- 과목상세정보 가져오기 -->
+<select id="selectSubject" parameterType="int" resultType="com.bitacademy.vo.SubjectVo">
+     <![CDATA[
+     	select  s.subject_id,
+     	        s.subjectCate_id,
+				s.subjectName,
+				s.subjectDesc,
+				sc.cateName
+		from subject s, subjectCate sc
+		where s.subjectCate_id = sc.subjectCate_id
+		and s.subject_id = #{subject_id}
+     ]]>
+</select>
+ 
+ 
+<!-- 과목수정하기 -->
+<update id="updateSubject" parameterType="com.bitacademy.vo.SubjectVo">
+	<![CDATA[
+		UPDATE subject set
+			subjectDesc = #{subjectDesc}
+	 	where subject_id = #{subject_id}
+	]]>
+</update>
+
+
+<!-- 과목 이동하기 -->
+<update id="updateSubjectCateSubjectCate_id" parameterType="com.bitacademy.vo.SubjectVo">
+    <![CDATA[
+	    UPDATE subject set
+	    	subjectCate_id=#{subjectCate_id}
+	    where subject_id=#{subject_id}
+    ]]>
+</update>
+
+
+
+</mapper>

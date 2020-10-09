@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="class">
+
+<!-- 클래스(반), 과목카테고리 관리 -->
+
+
+<!-- 클래스(반)카테고리 리스트 가져오기 -->
+<select id="selectClassCateList" resultType="com.bitacademy.vo.ClassCateVo">
+	<![CDATA[
+		select  classCate_id,
+				cateName,
+				parent_id
+		from classCate
+		order by cateName asc, classCate_id desc
+	]]>
+</select>
+
+<!-- 카테고리 등록하기 -->
+<insert id="insertClassCate" parameterType="com.bitacademy.vo.ClassCateVo" >
+    <selectKey keyProperty="classCate_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+	    insert into classCate(
+	    	cateName,
+	        parent_id)
+	     values (
+	     	#{cateName},
+	    	#{parent_id}
+	     )
+    ]]>
+</insert>
+
+
+<!-- 카테고리 제목만 수정하기 -->
+<update id="updateClassCateName" parameterType="com.bitacademy.vo.ClassCateVo">
+    <![CDATA[
+	    UPDATE classCate set
+	    	cateName=#{cateName}
+	    where classCate_id=#{classCate_id}
+    ]]>
+</update>
+
+<!-- 카테고리 삭제하기 -->
+<delete id="deleteClassCate" parameterType="com.bitacademy.vo.ClassCateVo">
+    <![CDATA[
+	    delete from classCate
+	    where classCate_id=#{classCate_id} 
+    ]]>
+</delete>
+
+
+<!-- 카테고리 이동하기 -->
+<update id="updateClassCateParent_id" parameterType="com.bitacademy.vo.ClassCateVo">
+    <![CDATA[
+	    UPDATE classCate set
+	    	parent_id=#{parent_id}
+	    where classCate_id=#{classCate_id}
+    ]]>
+</update>
+
+
+
+
+
+<!-- 클래스(반) 리스트 가져오기 -->
+<select id="selectClassList" resultType="com.bitacademy.vo.ClassVo">
+	<![CDATA[
+        select  class_id,
+				classCate_id,
+				curri_id,
+				className
+        from classInfo
+       	order by className asc, class_id desc
+	]]>
+</select>
+
+
+<!-- 클래스(반) 등록하기 -->
+<insert id="insertClass" parameterType="com.bitacademy.vo.ClassVo" >
+    <selectKey keyProperty="class_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+    	insert into classInfo(
+			classCate_id,
+			className
+  		) 
+    	values(
+    		#{classCate_id},
+    		#{className}
+    	)
+    ]]>
+</insert>
+
+
+<!-- 클래스(반) 제목만 수정하기 -->
+<update id="updateClassName" parameterType="com.bitacademy.vo.ClassVo">
+	<![CDATA[
+		UPDATE classInfo set
+			className = #{className}
+	 	where class_id = #{class_id}
+	]]>
+</update>
+
+
+<!-- 클래스(반) 삭제하기 -->
+<delete id="deleteClass" parameterType="com.bitacademy.vo.ClassVo">
+    <![CDATA[
+	    delete from classInfo
+	    where class_id = #{class_id}
+    ]]>
+</delete>
+
+
+
+<!-- 클래스(반) 이동하기 -->
+<update id="updateClassCateClassCate_id" parameterType="com.bitacademy.vo.ClassVo">
+    <![CDATA[
+	    UPDATE classInfo set
+	    	classCate_id=#{classCate_id}
+	    where class_id=#{class_id}
+    ]]>
+</update>
+
+
+<!-- 클래스(반) 상세-기본정보 가져오기 -->
+<select id="selectClassInfo" parameterType="int" resultType="com.bitacademy.vo.ClassVo">
+	<![CDATA[
+        select  ta.class_id,
+				ta.classCate_id,
+				ta.curri_id,
+				ta.className,
+				ta.startDate,
+				ta.endDate,
+				ta.lectureTime,
+				ta.maxCnt,
+				ta.price,
+				ta.support,
+				ta.managerInfo,
+				ta.operState,
+				ta.gisuName,
+				ta.classCode,
+				ta.pageURL,
+				ta.cateName,
+				cu.curriName
+		from	(select  c.class_id,
+		        		c.classCate_id,
+		        		c.curri_id,
+		        		c.className,
+		        		c.startDate,
+		        		c.endDate,
+		        		c.lectureTime,
+		        		c.maxCnt,
+		        		c.price,
+		        		c.support,
+		        		c.managerInfo,
+		        		c.operState,
+		        		c.gisuName,
+		        		c.classCode,
+		        		c.pageURL,
+		        		cc.cateName
+        		from classInfo c, classCate cc
+		        where c.class_id = #{class_id}
+		        and c.classCate_id = cc.classCate_id) ta
+		left join curriInfo cu
+		on ta.curri_id = cu.curri_id
+	]]>
+</select>
+
+
+
+
+<!-- 클래스(반) 기본정보 수정하기 -->
+<update id="updateClassInfo" parameterType="com.bitacademy.vo.ClassVo">
+	<![CDATA[
+		update classInfo
+		set classCate_id = #{classCate_id},
+			curri_id = #{curri_id},
+	]]>		
+		<if test="startDate != ''">
+			startDate = #{startDate},
+		</if>	
+		<if test="endDate != ''">
+			endDate = #{endDate},
+		</if>
+	<![CDATA[
+			lectureTime = #{lectureTime},
+			maxCnt = #{maxCnt},
+			price = #{price},
+			support = #{support},
+			managerInfo = #{managerInfo},
+			operState = #{operState},
+			gisuName = #{gisuName},
+			classCode = #{classCode},
+			pageURL = #{pageURL}
+		where class_id = #{class_id}
+	]]>		
+</update>
+
+
+
+<!-- 전형일 등록하기 -->
+<insert id="insertTestDate" parameterType="com.bitacademy.vo.TestDateVo" >
+	<![CDATA[
+	   	insert into testDate(
+			class_id,
+			testDate,
+			testTime
+	 		) 
+	   	values(
+	   		#{class_id},
+	   		#{testDate},
+	   		#{testTime}
+	   	)
+	]]>
+</insert>
+
+
+<!-- 전형일 수정하기 -->
+<update id="updateTestDate" parameterType="com.bitacademy.vo.TestDateVo">
+<![CDATA[
+	update testDate
+	set testDate = #{testDate},
+		testTime = #{testTime}
+	where testDate_id = #{testDate_id}
+]]>	
+</update>
+
+
+<!-- 전형일 모두 삭제하기 -->
+<delete id="deleteTestDateAll" parameterType="int">
+<![CDATA[
+	delete from testDate
+	where class_id = #{class_id}
+]]>	
+</delete>
+
+
+
+
+
+<!-- 커리큘럼 삭제(클래스info 테이블 정보수정) -->
+<update id="updateCurriAtClass" parameterType="int">
+	<![CDATA[
+		update classInfo 
+		set	curri_id = null
+		where class_id = #{class_id}
+	]]>		
+</update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 클래스(반) 기본정보 수정하기(자동) -->
+<update id="updateClassInfoAuto" parameterType="com.bitacademy.vo.AutoSaveVo">
+	<![CDATA[
+		update classInfo
+	]]>		
+ 	<if test="key != null and key.equals('classCode') ">
+        set	classCode = #{value}
+ 	</if>
+	<if test="key != null and key.equals('startDate') ">
+        set	startDate = #{value}
+ 	</if>
+	<if test="key != null and key.equals('endDate') ">
+        set	endDate = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('maxCnt') ">
+        set	maxCnt = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('lectureTime') ">
+        set	lectureTime = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('price') ">
+        set	price = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('support') ">
+        set	support = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('managerInfo') ">
+        set	managerInfo = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('pageURL') ">
+        set	pageURL = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('operState') ">
+        set	operState = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('gisuName') ">
+        set	gisuName = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('curri_id') ">
+        set	curri_id = #{value}
+ 	</if>
+	<![CDATA[ 	
+	 	where class_id = #{id}
+	]]>
+</update>
+
+
+
+
+
+
+
+<!-- 전형일시 가져오기: 클래스(반) -->
+<select id="selectTestDate" parameterType="int" resultType="com.bitacademy.vo.TestDateVo">
+	<![CDATA[
+        select  testDate_id,
+        		class_id,
+        		testDate,
+        		TIME_FORMAT(testTime, "%H:%i") testTime
+        from testDate
+       	where class_id =  #{class_id}
+       	order by testDate asc, class_id desc
+	]]>
+</select>
+
+
+
+
+
+<!-- 전형일시: 클래스(반) 기본정보 수정하기(자동) -->
+<update id="updateTestDateAuto" parameterType="com.bitacademy.vo.AutoSaveVo">
+	<![CDATA[
+		update testDate
+	]]>		
+ 	<if test="key != null and key.equals('testDate') ">
+        set	testDate = #{value}
+ 	</if>
+	<if test="key != null and key.equals('testTime') ">
+        set	testTime = #{value}
+ 	</if>
+	<![CDATA[ 	
+	 	where testDate_id = #{id}
+	]]>
+</update>
+
+
+<!-- 전형일시: 클래스(반) 기본정보 등록하기(자동)-->
+<insert id="insertTestDateAuto" parameterType="com.bitacademy.vo.AutoSaveVo" >
+    <selectKey keyProperty="id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+   	<if test="key != null and key.equals('testDate') ">
+        insert into testDate(
+			class_id,
+			testDate
+  		) 
+    	values(
+    		#{id},
+    		#{value}
+    	)
+ 	</if>
+	<if test="key != null and key.equals('testTime') ">
+       	insert into testDate(
+			class_id,
+			testTime
+  		) 
+    	values(
+    		#{id},
+    		#{value}
+    	)
+ 	</if>
+</insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 클래스(반) 사용된 갯수 구하기 -->
+<select id="selectCntClassByCurri_id" parameterType="int" resultType="int">
+	<![CDATA[
+        select  *
+        from classInfo
+       	order by className asc, class_id desc
+	]]>
+</select>
+
+
+</mapper>
+
+
+

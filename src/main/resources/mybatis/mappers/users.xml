@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="users">
+
+   <!--  <resultMap id="rm" type="UsersVo">
+        <result column="AuthCode" property="authCode" />
+        <result column="NameHan" property="nameHan" />
+        <result column="NameEng" property="nameEng" />
+        <result column="LoginID" property="loginID" />
+        <result column="Password" property="password" />
+        <result column="BirthDate" property="birthDate" />
+        <result column="StudResNum" property="studResNum" />
+        <result column="Address" property="address" />
+        <result column="FamilyAddress" property="familyAddress" />
+        <result column="PostNum" property="postNum" />
+        <result column="Handphone" property="handphone" />
+        <result column="Telephone" property="telephone" />
+        <result column="Email" property="email" />
+        <result column="HomePage" property="homePage" />
+        <result column="Bank" property="bank" />
+        <result column="Depositor" property="depositor" />
+        <result column="AccountNum" property="accountNum" />
+        <result column="MillArm" property="millArm" />
+        <result column="MillRank" property="millRank" />
+        <result column="MillEnrollDate" property="millEnrollDate" />
+        <result column="MillDischargeDate" property="millDischargeDate" />
+        <result column="MillIncompletReason" property="millIncompletReason" />
+        <result column="Language" property="language" />
+        <result column="OS" property="oS" />
+        <result column="ProLang" property="proLang" />
+        <result column="Magazine" property="magazine" />
+        <result column="Newspaper" property="newspaper" />
+        <result column="AfterPlan" property="afterPlan" />
+        <result column="Motive" property="motive" />
+        <result column="LearningContent" property="learningContent" />
+        <result column="ConsultContent" property="consultContent" />
+        <result column="Thesis" property="thesis" />
+        <result column="File_no" property="file_no" />
+    </resultMap> -->
+
+<!--     데이터 추가할때 썼던 쿼리
+    <insert id="add" parameterType="com.bitacademy.vo.UsersVo">
+        <![CDATA[
+        INSERT INTO bitacademy_test.Users (
+        AuthCode, NameHan, NameEng, LoginID, Password, BirthDate, StudResNum, Address, FamilyAddress, PostNum, Handphone, Telephone, Email, HomePage, Bank, Depositor, AccountNum, MillArm, MillRank, MillEnrollDate, MillDischargeDate, MillIncompletReason, Language, OS, ProLang, Magazine, Newspaper, AfterPlan, Motive, LearningContent, ConsultContent, Thesis)
+        VALUES (#{authCode}, #{nameHan}, #{nameEng}, #{loginID}, #{password}, #{birthDate}, #{studResNum}, #{address}, #{familyAddress}, #{postNum}, #{handphone}, #{telephone}, #{email}, #{homePage}, #{bank}, #{depositor}, #{accountNum}, #{millArm}, #{millRank}, #{millEnrollDate}, #{millDischargeDate}, #{millIncompletReason}, #{language}, #{oS}, #{proLang}, #{magazine}, #{newspaper}, #{afterPlan}, #{motive}, #{learningContent}, #{consultContent}, #{thesis})
+        ]]>
+    </insert> -->
+
+</mapper>

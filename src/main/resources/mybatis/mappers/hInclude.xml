@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hIncude">
+
+<!-- 인크루드 카테고리 리스트 가져오기 -->
+<select id="selectHIncCate" resultType="com.bitacademy.vo.HIncCateVo">
+	<![CDATA[
+		select  hIncCate_id,
+				cateName,
+				parent_id,
+				cateOrder
+		from hIncCate
+		where vState = "show"
+		order by cateOrder asc
+	]]>
+</select>
+
+<!-- 인크루드 데이타 리스트 가져오기 -->
+<select id="selectHIncludeList" resultType="com.bitacademy.vo.HIncludeVo">
+	<![CDATA[
+		select  hInclude_id,
+				hIncCate_id,
+				hIncludeName,
+				user_no,
+				hIncludeOrder
+		from hInclude
+		where vState = "show"
+		order by hIncludeOrder asc
+	]]>
+</select>
+
+
+
+<!-- 인크루드 데이타 가져오기 -->
+<select id="selectHInclude" parameterType="int" resultType="com.bitacademy.vo.HIncludeVo">
+	<![CDATA[
+		select  hInclude_id,
+				hIncCate_id,
+				hIncludeName,
+				hIncludeHtml,
+				user_no,
+				hIncludeOrder
+		from hInclude
+		where hInclude_id = #{hInclude_id}
+	]]>
+</select>
+
+
+<!-- 인크루드 데이타 저장하기 -->
+<update id="updateHInclude" parameterType="com.bitacademy.vo.HIncludeVo">
+	<![CDATA[
+		UPDATE hInclude set
+	    	hIncludeHtml=#{hIncludeHtml}
+	    where hInclude_id=#{hInclude_id}
+	]]>
+</update>
+
+</mapper>
+
+
+

@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="curri">
+
+<!-- 커리, 커리카테고리 관리 -->
+
+
+<!-- 커리카테고리 리스트 가져오기 -->
+<select id="selectCurriCateList" resultType="com.bitacademy.vo.CurriCateVo">
+	<![CDATA[
+		select  curriCate_id,
+				cateName,
+				parent_id
+		from curriCate
+		order by cateName asc, curriCate_id desc
+	]]>
+</select>
+
+<!-- 카테고리 등록하기 -->
+<insert id="insertCurriCate" parameterType="com.bitacademy.vo.CurriCateVo" >
+    <selectKey keyProperty="curriCate_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+	    insert into curriCate(
+	    	cateName,
+	        parent_id
+	        )
+	     values (
+	     	#{cateName},
+	    	#{parent_id}
+	     )
+    ]]>
+</insert>
+
+<!-- 카테고리 제목만 수정하기 -->
+<update id="updateCurriCateName" parameterType="com.bitacademy.vo.CurriCateVo">
+    <![CDATA[
+	    UPDATE curriCate set
+	    	cateName=#{cateName}
+	    where curriCate_id=#{curriCate_id}
+    ]]>
+</update>
+
+<!-- 카테고리 삭제하기 -->
+<delete id="deleteCurriCate" parameterType="com.bitacademy.vo.CurriCateVo">
+    <![CDATA[
+	    delete from curriCate
+	    where curriCate_id=#{curriCate_id} 
+    ]]>
+</delete>
+
+<!-- 카테고리 이동하기 -->
+<update id="updateCurriCateParent_id" parameterType="com.bitacademy.vo.CurriCateVo">
+    <![CDATA[
+	    UPDATE curriCate set
+	    	parent_id=#{parent_id}
+	    where curriCate_id=#{curriCate_id}
+    ]]>
+</update>
+
+
+
+
+<!-- 커리큘럼 리스트 가져오기 -->
+<select id="selectCurriList" resultType="com.bitacademy.vo.CurriVo">
+	<![CDATA[
+        select  curri_id,
+        		curriCate_id,
+        		curriName,
+        		goal,
+        		content,
+        		target,
+        		totalTime
+        from curriInfo
+       	order by curriName asc, curri_id desc
+	]]>
+</select>
+
+<!-- 커리큘럼 등록하기 -->
+<insert id="insertCurri" parameterType="com.bitacademy.vo.CurriVo" >
+    <selectKey keyProperty="curri_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+    	insert into curriInfo(
+			curriCate_id,
+			curriName
+  		) 
+    	values(
+    		#{curriCate_id},
+    		#{curriName}
+    	)
+    ]]>
+</insert>
+
+
+<!-- 커리큘럼 제목만 수정하기 -->
+<update id="updateCurriName" parameterType="com.bitacademy.vo.CurriVo">
+	<![CDATA[
+		UPDATE curriInfo set
+			curriName = #{curriName}
+	 	where curri_id = #{curri_id}
+	]]>
+</update>
+
+
+<!-- 커리큘럼 삭제하기 -->
+<delete id="deleteCurri" parameterType="com.bitacademy.vo.CurriVo">
+    <![CDATA[
+	    delete from curriInfo
+	    where curri_id = #{curri_id}
+    ]]>
+</delete>
+
+
+
+<!-- 커리큘럼 이동하기 -->
+<update id="updateCurriCateCurriCate_id" parameterType="com.bitacademy.vo.CurriVo">
+    <![CDATA[
+	    UPDATE curriInfo set
+	    	curriCate_id=#{curriCate_id}
+	    where curri_id=#{curri_id}
+    ]]>
+</update>
+
+
+
+<!-- 커리큘럼 상세-기본정보 가져오기 -->
+<select id="selectCurriInfo" parameterType="int" resultType="com.bitacademy.vo.CurriVo">
+	<![CDATA[
+        select  c.curri_id,
+        		c.curriCate_id,
+        		c.curriName,
+        		c.goal,
+        		c.content,
+        		c.target,
+        		c.totalTime,
+        		cc.cateName
+        from curriInfo c, curriCate cc
+        where c.curriCate_id = cc.curriCate_id
+        and c.curri_id = #{curri_id}
+	]]>
+</select>
+
+
+<!-- 커리큘럼 단계 가져오기 -->
+<select id="selectCurriStep" parameterType="int" resultType="com.bitacademy.vo.CurriStepVo">
+	<![CDATA[
+        select  c.curriStep_id,
+        		c.curri_id,
+        		c.stepName,
+        		c.stepOrder
+        from curriStep c
+        where c.curri_id = #{curri_id}
+        order by c.stepOrder asc
+	]]>
+</select>
+
+
+
+<!-- 커리큘럼 단계갯수 가져오기 : 커리큘럼 삭제시 판단-->
+<select id="selectCntCurriStepByCurri_id" parameterType="int" resultType="int">
+	<![CDATA[
+        select count(*)
+        from curriStep
+        where curri_id = #{curri_id}
+	]]>
+</select>
+
+
+
+<!-- 커리큘럼 단계 추가하기 ()-->
+<insert id="insertCurriStep" parameterType="com.bitacademy.vo.CurriSubjectVo" >
+    <selectKey keyProperty="curriStep_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+    	insert into curriStep(
+			curri_id
+  		) 
+    	values(
+    		#{curri_id}
+    	)
+    ]]>
+</insert>
+
+
+<!-- 커리큘럼 단계 삭제 -->
+<delete id="deleteCurriStep" parameterType="int">
+    <![CDATA[
+	    delete from curriStep
+	    where curriStep_id = #{curriStep_id}
+    ]]>
+</delete>
+
+
+
+
+
+
+
+<!-- 커리큘럼-과목 가져오기 -->
+<select id="selectCurriSubject" parameterType="int" resultType="com.bitacademy.vo.CurriSubjectVo">
+	<![CDATA[
+        select  cs.curriSubject_id,
+        		cs.curriStep_id,
+        		cs.subject_id,
+        		cs.subjectTime,
+        		cs.stepInOrder,
+        		s.subjectName,
+        		s.subjectDesc
+        from subject as s
+        right join curriSubject as cs
+        on s.subject_id = cs.subject_id
+        where cs.curriStep_id = #{curriStep_id}
+        order by cs.stepInOrder asc
+	]]>
+</select>
+
+
+<!-- 커리큘럼 단계별 과목개수 -->
+<select id="selectCntCurriSubjectByCurriStep_id" parameterType="int" resultType="int">
+	<![CDATA[
+		select  count(*)
+        from curriSubject
+        where curriStep_id =  #{curriStep_id}
+	]]>
+</select>
+
+
+<!-- 커리큘럼에 사용된 과목수 : 과목삭제시 사용-->
+<select id="selectCntCurriSubjectBySubject_id" parameterType="int" resultType="int">
+	<![CDATA[
+		select  count(*)
+        from curriSubject
+        where subject_id =  #{subject_id}
+	]]>
+</select>
+
+
+ 
+ 
+ <!-- 커리큘럼 테이블의 과목 삭제하기 -->
+<delete id="deleteCurriSubject" parameterType="int">
+    <![CDATA[
+	    delete from curriSubject
+	    where curriSubject_id = #{curriSubject_id}
+    ]]>
+</delete>
+ 
+
+<!-- 커리큘럼 과목 등록하기 -->
+<insert id="insertCurriSubject" parameterType="com.bitacademy.vo.CurriSubjectVo" >
+    <selectKey keyProperty="curriSubject_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+    	insert into curriSubject(
+			curriStep_id
+  		) 
+    	values(
+    		#{curriStep_id}
+    	)
+    ]]>
+</insert>
+
+<!-- 커리큘럼의 커리_과목에 과목 등록하기(과목키값 업데이트) -->
+<update id="updateCurriSubject" parameterType="com.bitacademy.vo.CurriSubjectVo">
+	<![CDATA[
+		update curriSubject
+		set	subject_id = #{subject_id}
+		where curriSubject_id = #{curriSubject_id}
+	]]>		
+</update>
+
+
+<!-- 커리큘럼 기본정보 수정하기(자동) -->
+<update id="updateCurriInfoAuto" parameterType="com.bitacademy.vo.AutoSaveVo">
+	<![CDATA[
+		update curri‌Info 
+	]]>		
+ 	<if test="key != null and key.equals('curriName') ">
+        set	curriName = #{value}
+ 	</if>
+	<if test="key != null and key.equals('goal') ">
+        set	goal = #{value}
+ 	</if>
+	<if test="key != null and key.equals('content') ">
+        set	content = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('target') ">
+        set	target = #{value}
+ 	</if>
+ 	<if test="key != null and key.equals('totalTime') ">
+        set	totalTime = #{value}
+ 	</if>
+	<![CDATA[ 	
+	 	where curri_id = #{id}
+	]]>
+</update>
+
+
+<!-- 커리큘럼 스텝(단계) 수정하기(자동) -->
+<update id="updateCurriStepAuto" parameterType="com.bitacademy.vo.AutoSaveVo">
+	<![CDATA[
+		update curriStep
+	]]>		
+ 	<if test="key != null and key.equals('stepOrder') ">
+        set	stepOrder = #{value}
+ 	</if>
+	<if test="key != null and key.equals('stepName') ">
+        set	stepName = #{value}
+ 	</if>
+	<![CDATA[ 	
+	 	where curriStep_id = #{id}
+	]]>
+</update>
+
+
+
+
+<!-- 커리큘럼 과목정보 자동수정하기 -->
+<update id="updateCurriSubjectAuto" parameterType="com.bitacademy.vo.AutoSaveVo">
+	<![CDATA[
+		update curriSubject
+	]]>		
+ 	<if test="key != null and key.equals('stepInOrder') ">
+        set	stepInOrder = #{value}
+ 	</if>
+	<if test="key != null and key.equals('subjectTime') ">
+        set	subjectTime = #{value}
+ 	</if>
+	<![CDATA[ 	
+	 	where curriSubject_id = #{id}
+	]]>
+</update>
+
+
+
+
+
+
+
+
+
+
+</mapper>

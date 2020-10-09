@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hPage">
+
+<!-- 코스카테고리(홈페이지) 리스트 가져오기 -->
+<select id="selectHCateList" resultType="com.bitacademy.vo.HCateVo">
+	<![CDATA[
+		select  hCate_id,
+				cateName,
+				parent_id,
+				cateOrder
+		from hCate
+		order by cateOrder asc
+		
+	]]>
+</select>
+
+<!-- 코스(홈페이지) 리스트 가져오기 by hCate_id-->
+<select id="selectHContentList" parameterType="int"  resultType="com.bitacademy.vo.HContentVo">
+	<![CDATA[
+		select 	hc.hContent_id,
+				hc.hCate_id,
+				hc.header_id,
+				hc.aside_id,
+				hc.title,
+				hi.hIncludeName asideName 
+		from hContent hc, hInclude hi
+		where hc.aside_id = hi.hInclude_id
+		and hc.hCate_id = #{hCate_id}
+		order by hContent_id desc
+	]]>
+</select>
+
+
+
+<!-- 컨텐츠 1차 등록(제목, 카테고리)하기 -->
+<insert id="insertHContent" parameterType="com.bitacademy.vo.HContentVo" >
+    <selectKey keyProperty="hContent_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+	    insert into hContent(
+    		hCate_id,
+        	title,
+        	header_id
+	    )
+		values (
+			#{hCate_id},
+			#{title},
+			1
+		)
+    ]]>
+</insert>
+
+
+<!-- 컨텐츠 상세 가져오기 -->
+<select id="selectHContent" parameterType="int" resultType="com.bitacademy.vo.HContentVo">
+	<![CDATA[
+		select 	hco.hContent_id,
+				hco.hCate_id,
+				hco.user_no,
+				hco.header_id,
+				hco.aside_id,
+				hco.title,
+				hco.contentHtml,
+				hca.cateName
+		from hContent hco, hCate hca
+		where hco.hCate_id = hca.hCate_id
+		and hContent_id = #{hContent_id}
+	]]>
+</select>
+
+
+
+
+
+<!-- aside 리스트 가져오기:  코드작성페이지에서 리스트출력용 -->
+<select id="selectAsideList" parameterType="int" resultType="com.bitacademy.vo.HIncludeVo">
+	<![CDATA[
+		select 	hi.hInclude_id,
+				hi.hIncludeName,
+				hi.hIncludeOrder,
+				hi.hIncCate_id,
+				hc.cateName
+		from hInclude hi, hIncCate hc
+		where hc.hIncCate_id = hi.hIncCate_id
+		and hi.hIncCate_id = 3
+		order by hi.hIncludeOrder asc
+	]]>
+</select>
+
+
+<!-- 컨텐츠수정하기 -->
+<update id="updateHContnet" parameterType="com.bitacademy.vo.HContentVo">
+    <![CDATA[
+	    UPDATE hContent set
+	    	hCate_id=#{hCate_id},
+	    	aside_id=#{aside_id},
+	    	title=#{title},
+	    	contentHtml=#{contentHtml}
+	    where hContent_id=#{hContent_id}
+    ]]>
+</update>
+
+
+
+<!-- 컨텐츠 상세 삭제하기 -->
+<delete id="deleteHContent" parameterType="int">
+	<![CDATA[
+		delete from hContent
+		where hContent_id = #{hContent_id}
+	]]>
+</delete>
+
+
+
+<!-- 컨텐츠 파일첨부 하기 -->
+<insert id="insertHContentFile" parameterType="com.bitacademy.vo.HContentVo" >
+    <selectKey keyProperty="file_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    <![CDATA[
+	    insert into hContentFile(
+    		parent_id,
+        	orgName,
+        	exName,
+        	saveName,
+        	filePath,
+        	fileSize
+	    )
+		values (
+			#{parent_id},
+        	#{orgName},
+        	#{exName},
+        	#{saveName},
+        	#{filePath},
+        	#{fileSize}
+		)
+    ]]>
+</insert>
+
+
+<!-- 컨텐츠 첨부파일 리스트 가져오기 -->
+<select id="selectHContentFileList" parameterType="int" resultType="com.bitacademy.vo.FileVo">
+	<![CDATA[
+		select 	f.hContentFile_id file_id,
+				f.parent_id,
+				f.orgName,
+				f.exName,
+				f.saveName,
+				f.filePath,
+				f.fileSize
+		from hContentFile f
+		where parent_id = #{parent_id}
+		order by hContentFile_id asc
+	]]>
+</select>
+
+
+
+<!-- 컨텐츠 첨부파일 삭제하기 -->
+<delete id="deleteHContentFile" parameterType="int">
+	<![CDATA[
+		delete from hContentFile
+		where hContentFile_id = #{file_id}
+	]]>
+</delete>
+
+
+
+</mapper>
+
+
+
